@@ -12,7 +12,7 @@ library(biomaRt)
 library(rtracklayer)
 library(ChIPseeker)
 library(clusterProfiler)
-library(beepr)
+
 
 
 ############# VARIABLES TO ADJUST AS NEEDED ############################################################################
@@ -45,7 +45,6 @@ ventanasCounts <-
                width = 75,
                param = pe.param)
 
-beep(2)
 
 # Global enrichment filtering
 bin.size <- 500
@@ -91,9 +90,6 @@ legend(
 
 dev.off()
 
-
-beep(11)
-
 # Normalizing by TMM
 
 filtered.data <- normFactors(filtered.data, se.out = filtered.data)
@@ -125,13 +121,9 @@ for (i in seq_len(length(bam.files) - 1)) {
 
 dev.off()
 
-beep(3)
-
 # EDGER #####
 
-
 y <- asDGEList(filtered.data)
-
 
 # matrix design
 design <- model.matrix(~ factor(condiciones))
@@ -191,8 +183,6 @@ for (top in c(100, 500, 1000, 5000)) {
 }
 dev.off()
 
-beep(5)
-
 # Correction for multiple testing
 
 merged_results <-
@@ -225,13 +215,11 @@ names(ups) <- paste0("UpDar", 1:length(ups))
 upsbedname <- paste0("upDARS_", experiment, ".bed")
 export(ups, upsbedname)
 
-
 downs <- temp1dws$regions
 downs$score <- -10 * log10(temp1dws$combined$FDR)
 names(downs) <- paste0("DownDar", 1:length(downs))
 downsbedname <- paste0("downDARS_", experiment, ".bed")
 export(downs, downsbedname)
-
 
 # CHIPSEEKER ANNOTATIONS #######################
 
@@ -242,7 +230,6 @@ promoter <-
   getPromoters(TxDb = TxDb.Athaliana.BioMart.plantsmart28,
                upstream = 1000,
                downstream = 400)
-
 
 tagMatrix_u <- getTagMatrix(ups, windows = promoter)
 tagMatrix_d <- getTagMatrix(downs, windows = promoter)
@@ -397,7 +384,6 @@ write.table(
   sep = "\t"
 )
 
-
 # filtered results plot
 
 pdf(file = paste0(experiment,"_filteredResults.pdf"), width = 6, height = 6) 
@@ -412,6 +398,3 @@ abline(h = 0.8 , col = "red", lwd = 2)
 abline(h = -0.8 , col = "red", lwd = 2)
 
 dev.off()
-
-
-beep(8)
